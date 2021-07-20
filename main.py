@@ -1,4 +1,5 @@
 from flask import Flask, render_template, Response, url_for, redirect, request
+from flask_cors import CORS
 import cv2
 import numpy as np
 from tensorflow.keras.models import load_model
@@ -8,6 +9,7 @@ from PIL import ImageFont, ImageDraw, Image
 
 
 app = Flask(__name__)
+cors = CORS(app)
 model = load_model('1ResNet50_model.h5')
 
 label = 0
