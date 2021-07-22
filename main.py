@@ -7,10 +7,13 @@ from tensorflow.keras.applications.resnet50 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import ImageFont, ImageDraw, Image
 
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 cors = CORS(app)
 model = load_model('1ResNet50_model.h5')
+
+socketio = SocketIO(app)
 
 label = 0
 
@@ -86,7 +89,38 @@ def video_feed():
 def getLabel():
     return {"result": int(label)}
 
+####################################################
+
+
+@app.route('/page/remake')
+def remake_page():
+    return render_template('remake.html')
+
+
+@socketio.on('connect', namespace='/test')
+def connect_web():
+    print('[INFO] Web client connected: {}'.format(request.sid))
+
+
+@socketio.on('disconnect', namespace='/test')
+def disconnect_web():
+    print('[INFO] Web client disconnected: {}'.format(request.sid))
+
+
+@socketio.on('input image', namespace='/test')
+def test_message(input_data):
+    # print(input_data)
+    input_image = input_data.split(",")[1]
+    image_data = input_image  # Do your magical Image processing here!!
+    image_data = "data:image/jpeg;base64," + image_data
+    # print("OUTPUT " + image_data)
+    emit('out-image-event', {'image_data': image_data, 'result': 1}, namespace='/test')
+
+#####################################################
+
 
 if __name__ == "__main__":
-    # app.debug = True
-    app.run(host='0.0.0.0')
+    app.debug = True
+    # app.run(host='0.0.0.0')
+    print('[INFO] Starting server')
+    socketio.run(app=app, host='0.0.0.0', port=5000)
