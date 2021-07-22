@@ -1,3 +1,8 @@
+import base64
+import io
+import re
+from io import BytesIO
+
 from flask import Flask, render_template, Response, url_for, redirect, request
 from flask_cors import CORS
 import cv2
@@ -109,12 +114,22 @@ def disconnect_web():
 
 @socketio.on('input image', namespace='/test')
 def test_message(input_data):
-    # print(input_data)
-    input_image = input_data.split(",")[1]
-    image_data = input_image  # Do your magical Image processing here!!
-    image_data = "data:image/jpeg;base64," + image_data
-    # print("OUTPUT " + image_data)
-    emit('out-image-event', {'image_data': image_data, 'result': 1}, namespace='/test')
+    # 카메라로 들어온 이미지 가공
+    input_data = re.sub('^data:image/.+;base64,', '', input_data)
+    image_data = Image.open(BytesIO(base64.b64decode(input_data)))
+
+    img = np.resize(image_data, (224, 224, 3))
+    x = img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    x = preprocess_input(x)
+
+    # 예측
+    prediction = model.predict(x)
+    print(prediction)
+    predicted_class = np.argmax(prediction[0])  # 예측된 클래스 0, 1, 2
+    # print(prediction[0], predicted_class)
+    # predicted_class
+    emit('out-image-event', {'result': int(predicted_class)}, namespace='/test')
 
 #####################################################
 

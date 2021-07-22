@@ -36,6 +36,11 @@ $(document).ready(function(){
         console.log('Connected!');
     });
 
+    socket.on('disconnect', function() {
+        console.log('Disconnected!');
+        $('#videoElement').remove()
+    });
+
     var constraints = {
         video: {
             width: { min: 640 },
