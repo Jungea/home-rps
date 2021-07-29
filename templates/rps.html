@@ -17,7 +17,6 @@
 
     <script type="text/javascript"
                 src="{{ url_for('static', filename='rps_script.js') }}"></script>
-
 </head>
 
 <body>
@@ -49,14 +48,16 @@
 
     <div class="container mt-4">
         <h1>RPS</h1>
+        <br>
+
         <h3 id="result">카메라를 불러오는 중입니다.</h3>
 
         <div class="row">
-            <div class="col">
+            <div class="col border">
                 <img src="{{ url_for('video_feed') }}" width="100%">
             </div>
 <!--            <div class="col-sm-1">VS</div>-->
-            <div class="col">
+            <div class="col border pt-4">
                 <img id="computer_hand" class="img-fluid" src="">
             </div>
         </div>

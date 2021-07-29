@@ -49,16 +49,17 @@ def gen_frames():
             me = "가위"
 
         # 학습 결과 camera 표시
-        font1 = ImageFont.truetype("font/gulim.ttc", 100)
-        frame_pil = Image.fromarray(frame)
-        draw = ImageDraw.Draw(frame_pil)
-        draw.text((50, 50), me, font=font1, fill=(0, 0, 255, 3))
-        frame = np.array(frame_pil)
-        cv2.imshow('RPS', frame)
+        # font1 = ImageFont.truetype("font/gulim.ttc", 100)
+        # frame_pil = Image.fromarray(frame)
+        # draw = ImageDraw.Draw(frame_pil)
+        # draw.text((50, 50), me, font=font1, fill=(0, 0, 255, 3))
+        # frame = np.array(frame_pil)
+        # cv2.imshow('RPS', frame)
 
         # HTML 파일의 Image 태그에 camera 내용 표시
         ret, buffer = cv2.imencode('.jpg', frame)
         frame = buffer.tobytes()
+        # 바이트 객체
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
@@ -88,5 +89,4 @@ def getLabel():
 
 
 if __name__ == "__main__":
-    # app.debug = True
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
